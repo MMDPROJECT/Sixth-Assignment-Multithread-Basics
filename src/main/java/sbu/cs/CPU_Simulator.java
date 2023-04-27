@@ -1,8 +1,6 @@
 package sbu.cs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /*
     For this exercise, you must simulate a CPU with a single core.
@@ -17,22 +15,41 @@ import java.util.List;
     Use the tests provided in the test folder to ensure your code works correctly.
  */
 
-public class CPU_Simulator
-{
-    public static class Task implements Runnable {
+public class CPU_Simulator {
+    public static class Task implements Runnable, Comparable<Task> {
         long processingTime;
         String ID;
+
         public Task(String ID, long processingTime) {
-        // TODO
+            this.processingTime = processingTime;
+            this.ID = ID;
         }
 
-    /*
-        Simulate running a task by utilizing the sleep method for the duration of
-        the task's processingTime. The processing time is given in milliseconds.
-    */
+        public long getProcessingTime() {
+            return processingTime;
+        }
+
+        public String getID() {
+            return ID;
+        }
+
+        /*
+                    Simulate running a task by utilizing the sleep method for the duration of
+                    the task's processingTime. The processing time is given in milliseconds.
+        */
         @Override
         public void run() {
-        // TODO
+            try {
+                Thread.sleep(this.processingTime);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public int compareTo(Task compareTu) {
+            long compareTime = compareTu.processingTime;
+            return (int) (this.processingTime - compareTime);
         }
     }
 
@@ -41,14 +58,19 @@ public class CPU_Simulator
         Here the CPU selects the next shortest task to run (also known as the
         shortest task first scheduling algorithm) and creates a thread for it to run.
     */
-    public ArrayList<String> startSimulation(ArrayList<Task> tasks) {
+    public static ArrayList<String> startSimulation(ArrayList<Task> tasks) {
         ArrayList<String> executedTasks = new ArrayList<>();
-
-        // TODO
-
+        Collections.sort(tasks);
+        for (Task task : tasks) {
+            Thread t = new Thread(task);
+            try {
+                t.start();
+                t.join();
+            } catch (InterruptedException ie) {
+                System.out.println(ie.getMessage());
+            }
+            executedTasks.add(task.getID());
+        }
         return executedTasks;
-    }
-
-    public static void main(String[] args) {
     }
 }
