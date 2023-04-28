@@ -19,10 +19,48 @@ package sbu.cs;
     Use the tests provided in the test folder to ensure your code works correctly.
  */
 
-public class FindMultiples
-{
+import java.util.ArrayList;
 
-    // TODO create the required multithreading class/classes using your preferred method.
+public class FindMultiples {
+    public static class MultiplesRunnable implements Runnable {
+        private int sum;
+        private int lowerBound;
+        private int upperBound;
+
+        //Constructor
+
+        public MultiplesRunnable(int lowerBound, int upperBound) {
+            this.sum = 0;
+            this.lowerBound = lowerBound;
+            this.upperBound = upperBound;
+        }
+
+        //Getter
+
+
+        public int getSum() {
+            return sum;
+        }
+
+        public int getLowerBound() {
+            return lowerBound;
+        }
+
+        public int getUpperBound() {
+            return upperBound;
+        }
+
+        @Override
+        public void run() {
+            int divisor = this.lowerBound;
+            while (divisor <= this.upperBound) {
+                if (divisor % 3 == 0 || divisor % 5 == 0 || divisor % 7 == 0) {
+                    this.sum += divisor;
+                }
+                divisor++;
+            }
+        }
+    }
 
 
     /*
@@ -31,9 +69,31 @@ public class FindMultiples
     */
     public int getSum(int n) {
         int sum = 0;
-
-        // TODO
-
+        MultiplesRunnable task_1 = new MultiplesRunnable(1, (int) Math.floor(n / 4));
+        MultiplesRunnable task_2 = new MultiplesRunnable((int) Math.floor(n / 4) + 1, 2 * (int) Math.floor(n / 4));
+        MultiplesRunnable task_3 = new MultiplesRunnable(2 * (int) Math.floor(n / 4) + 1, 3 * (int) Math.floor(n / 4));
+        MultiplesRunnable task_4 = new MultiplesRunnable(3 * (int) Math.floor(n / 4) + 1, n);
+        Thread thread_1 = new Thread(task_1);
+        Thread thread_2 = new Thread(task_2);
+        Thread thread_3 = new Thread(task_3);
+        Thread thread_4 = new Thread(task_4);
+        try {
+            thread_1.start();
+            thread_1.join();
+            thread_2.start();
+            thread_2.join();
+            thread_3.start();
+            thread_3.join();
+            thread_4.start();
+            thread_4.join();
+            sum += task_1.getSum();
+            sum += task_2.getSum();
+            sum += task_3.getSum();
+            sum += task_4.getSum();
+        } catch (InterruptedException ie){
+            System.out.println(ie.getMessage());
+            System.out.println(ie.getStackTrace());
+        }
         return sum;
     }
 
