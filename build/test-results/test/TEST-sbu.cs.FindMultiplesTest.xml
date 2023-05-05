@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="sbu.cs.FindMultiplesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2023-04-28T11:24:29" hostname="MMDPROJECT" time="0.026">
+<testsuite name="sbu.cs.FindMultiplesTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2023-05-05T12:52:58" hostname="MMDPROJECT" time="0.021">
   <properties/>
-  <testcase name="testOne()" classname="sbu.cs.FindMultiplesTest" time="0.011"/>
-  <testcase name="testSix()" classname="sbu.cs.FindMultiplesTest" time="0.002"/>
-  <testcase name="testTwo()" classname="sbu.cs.FindMultiplesTest" time="0.002"/>
-  <testcase name="testThree()" classname="sbu.cs.FindMultiplesTest" time="0.002"/>
+  <testcase name="testOne()" classname="sbu.cs.FindMultiplesTest" time="0.009"/>
+  <testcase name="testSix()" classname="sbu.cs.FindMultiplesTest" time="0.001"/>
+  <testcase name="testTwo()" classname="sbu.cs.FindMultiplesTest" time="0.001"/>
+  <testcase name="testThree()" classname="sbu.cs.FindMultiplesTest" time="0.001"/>
   <testcase name="testFive()" classname="sbu.cs.FindMultiplesTest" time="0.003"/>
   <testcase name="testFour()" classname="sbu.cs.FindMultiplesTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>

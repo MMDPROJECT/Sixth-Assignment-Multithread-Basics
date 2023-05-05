@@ -1,48 +1,195 @@
-# Multithread Basics
+![image-20230505161446630](https://s8.uupload.ir/files/untitled_0ov0.png)
 
-## Introduction
-In this assignment, you are given three introductory exercises focused on the basics of multithreading. Solve each exercise according to the provided guidelines.
+																# 							Sixth Assignment Report
 
-
-## Objectives
-- Review the concepts of multithreaded programming and utilize them correctly
-- Review the different methods of creating threads in java
-- Utilize interrupts and debug a program using them
-- Familiarize yourself with Thread Pools
-- Write a report on the assignment
+															## 							Mohammad Hossein Basouli   401222020
 
 
-## Tasks
-1. Fork this repository and clone the fork to your local machine. Ensure to create a new Git branch before starting your work
-2. Complete the following exercises based on the instructions provided:
-
-   - `CPU Simulator`: Simulate a single core CPU and schedule tasks to run on a thread
-   - `Find Multiples`: write a multithreaded program to find all integers in a given range that are divisible by 3, 5, or 7. Return the sum of all unique integers.
-   - `Use Interrupts`: Analyze the provided code and add interrupts where a thread must be terminated. Handle each interrupt in its respective thread.
-3. Commit your changes and push your commits to your fork on Github. Create a pull request (assigned to your mentor) to merge your changes to the main branch of your fork on Github.
 
 
-## Notes
-- You can find unit tests for the first two exercises (`CPU Simulator` and `Find Multiples`). Use these to ensure you've implemented the code correctly.
-- You are not allowed to change or delete any existing line of code in the third exercise (`Use Interrupts`). You can only add new code to solve the issues presented in the exercise.
-- Your report should focus on the solution you choose for each exercise (and why you chose it). Include any multithreading principles that you used in your report.
 
 
-## Evaluation
-- Your code should compile and run without any errors
-- Your code should be well-organized, readable, properly commented and should follow clean code principles
-- Your code should pass all of the provided unit tests
-- You should use Git for version control and include meaningful commit messages
 
 
-## Bonus Objectives
-1. Expand the `CPU Simulator` exercise by simulating a dual core CPU. Create a separate file for the new simulation. Include details of your implementation in your report. 
-2. Learn how to use Thread Pools in Java and solve the `Find Multiples` problem using a Fixed or Cached Thread Pool. Provide adequate explanation regarding Thread Pools and the difference between using a Thread Pool and other thread creation methods.
 
 
-## Submission
-- Push your code to your fork on Github
-- Upload your report to your fork on GitHub
 
 
-The deadline for submitting your code is Wednesday, May 3 (13th of Ordibehesht). Good luck, happy coding and hasta luego!
+
+
+
+
+
+
+
+
+
+## Introduction:
+
+- ### A Brief description of the assignment:
+
+  1. **Simulating a CPU processing** a sequential program. 
+     - [x] **Bonus Task : ** Simulating the same thing with a double core CPU. 
+
+  2.  **Calculating the sum** of all the m's that has gcd(n, m) = 1 and are lower than n.
+     - [x] **Bonus Task :** Doing the same thing using thread pool (cached or fixed).
+
+  3. **Execute two distinct tasks using multithreading** and terminate them if they take longer than a specified time.
+
+  
+
+## Design and Implementation: 
+
+- ### An explanation on the approach for each task:
+
+  1. **CPU_Simulator :** 
+
+     - We need to simply implement the **Comparable** and **Runnable** interfaces for class of our Task to sort the tasks before we start executing one. here is the implementation: 
+
+       ```java
+       public static class Task implements Runnable, Comparable<Task> {
+           .....
+               @Override
+               public void run() {
+                   try {
+                       Thread.sleep(this.processingTime);
+                   } catch (InterruptedException e) {
+                       throw new RuntimeException(e);
+                   }
+               }
+       
+               @Override
+               public int compareTo(Task compareTu) {
+                   long compareTime = compareTu.processingTime;
+                   return (int) (this.processingTime - compareTime);
+               }
+           }
+       ```
+
+     - Then start the tasks one after the other and join them to make sure they get completed before we return the result.
+
+       
+
+  2. **CPU_Simulator (Bonus Task) :**
+
+     - We have to **slice** the tasks into two pieces of task and then start Simulating on each one of them and then **merge** them into a list. Here is the implementation :
+
+       ```java
+           public static ArrayList<Task> sliceOfTasks(ArrayList<Task> tasks, int lowerBound, int upperBound) {
+               ArrayList<Task> slice = new ArrayList<>(upperBound - lowerBound + 1);
+               for (int i = lowerBound; i < upperBound; i++) {
+                   slice.add(tasks.get(i));
+               }
+               return slice;
+           }
+       
+           public static ArrayList<String> mergeList(List<String> l1, List<String> l2) {
+               ArrayList<String> mergedList = new ArrayList<>();
+               mergedList.addAll(l1);
+               mergedList.addAll(l2);
+               return mergedList;
+           }
+       ```
+
+  3.  **FindMultiples :**
+
+     - First we define a class that implements the **Runnable** for each task and then initialize the tasks by hand to assign them to a **thread** that calculates the m's in each bound. Then we add all the sums together.
+
+       ```java
+       public class FindMultiples {
+           public static class MultiplesRunnable implements Runnable {
+               private int sum;
+               private int lowerBound;
+               private int upperBound;
+       
+               //Constructor
+       ....
+               //Getter
+       ....
+               @Override
+               public void run() {
+                   //Some calculations...
+               }
+           }
+       
+           public int getSum(int n) {
+               int sum = 0;
+               MultiplesRunnable task_1 = new MultiplesRunnable(1, (int) Math.floor(n / 4));
+               MultiplesRunnable task_2 = new MultiplesRunnable((int) Math.floor(n / 4) + 1, 2 * (int) Math.floor(n / 4));
+               MultiplesRunnable task_3 = new MultiplesRunnable(2 * (int) Math.floor(n / 4) + 1, 3 * (int) Math.floor(n / 4));
+               MultiplesRunnable task_4 = new MultiplesRunnable(3 * (int) Math.floor(n / 4) + 1, n);
+               Thread thread_1 = new Thread(task_1);
+               Thread thread_2 = new Thread(task_2);
+               Thread thread_3 = new Thread(task_3);
+               Thread thread_4 = new Thread(task_4);
+               try {
+                   thread_1.start();
+                   thread_2.start();
+                   thread_3.start();
+                   thread_4.start();
+                   thread_1.join();
+                   thread_2.join();
+                   thread_3.join();
+                   thread_4.join();
+                   sum += task_1.getSum();
+                   sum += task_2.getSum();
+                   sum += task_3.getSum();
+                   sum += task_4.getSum();
+               } catch (InterruptedException ie){
+                   ie.getMessage();
+                   ie.printStackTrace();
+               }
+               return sum;
+           }
+       ```
+
+       
+
+  4. **FindMultiples (Bonus) :**
+
+     - We do the same thing but the difference is that this time we use **thread_pool** (**fixed thread_pool**).
+
+       ```java
+       public static int getSum(int n) {
+               int sum = 0;
+               ArrayList<MultiplesRunnable> tasks = new ArrayList<>();
+               ExecutorService threads = Executors.newFixedThreadPool(4);
+               tasks.add(new MultiplesRunnable(1, (int) Math.floor(n / 4)));
+               tasks.add(new MultiplesRunnable((int) Math.floor(n / 4) + 1, 2 * (int) Math.floor(n / 4)));
+               tasks.add(new MultiplesRunnable(2 * (int) Math.floor(n / 4) + 1, 3 * (int) Math.floor(n / 4)));
+               tasks.add(new MultiplesRunnable(3 * (int) Math.floor(n / 4) + 1, n));
+               for (MultiplesRunnable task : tasks){
+                   threads.execute(task);
+               }
+               threads.shutdown();
+       
+               try {
+                   threads.awaitTermination(10000, TimeUnit.MILLISECONDS);
+                   for (int i = 0; i < tasks.size(); i++){
+                       sum += tasks.get(i).getSum();
+                   }
+               } catch (InterruptedException ie) {
+                   ie.getMessage();
+               }
+               return sum;
+           }
+       ```
+
+       
+
+  5. **UserInterrupts :**
+
+     - We need to get the current time before starting each **thread** that **tasks** have been assigned to, and then we should check while the **thread** is **running** and **alive** that it has not taken longer than **3 seconds**. If it has, we should terminate it.
+
+  
+
+## Testing and Evaluation:
+
+- As we can see from the Unit tests results everything works great.
+
+  
+
+
+
+
+
